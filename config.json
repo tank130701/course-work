@@ -1,0 +1,20 @@
+{
+  "http_port": "8080",
+  "connection_type" : "mysql",
+  "postgresql": {
+    "host": "your_postgresql_host_here",
+    "port": "your_postgresql_port_here",
+    "username": "your_postgresql_username_here",
+    "password": "your_postgresql_password_here",
+    "dbname": "your_postgresql_dbname_here",
+    "ssl_mode": "your_postgresql_sslmode_here"
+  },
+  "mysql": {
+    "host": "your_mysql_host_here",
+    "port": "your_mysql_port_here",
+    "username": "your_mysql_username_here",
+    "password": "your_mysql_password_here",
+    "dbname": "your_mysql_dbname_here",
+    "ssl_mode": "your_mysql_sslmode_here"
+  }
+}
