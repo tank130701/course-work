@@ -6,10 +6,10 @@ import (
 )
 
 type TodoListService struct {
-	repo repository.TodoList
+	repo repository.ITodoList
 }
 
-func NewTodoListService(repo repository.TodoList) *TodoListService {
+func NewTodoListService(repo repository.ITodoList) *TodoListService {
 	return &TodoListService{repo: repo}
 }
 

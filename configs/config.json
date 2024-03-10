@@ -1,6 +1,6 @@
 {
   "http_port": "8080",
-  "connection_type" : "mysql",
+  "connection_type" : "postgres",
   "postgresql": {
     "host": "your_postgresql_host_here",
     "port": "your_postgresql_port_here",

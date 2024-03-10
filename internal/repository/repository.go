@@ -6,12 +6,12 @@ import (
 	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres"
 )
 
-type Authorization interface {
+type IAuthorization interface {
 	CreateUser(user models.User) (int, error)
 	GetUser(username, password string) (models.User, error)
 }
 
-type TodoList interface {
+type ITodoList interface {
 	Create(userId int, list models.TodoList) (int, error)
 	GetAll(userId int) ([]models.TodoList, error)
 	GetById(userId, listId int) (models.TodoList, error)
@@ -19,23 +19,23 @@ type TodoList interface {
 	Update(userId, listId int, input models.UpdateListInput) error
 }
 
-type TodoItem interface {
+type ITodoItem interface {
 	Create(listId int, item models.TodoItem) (int, error)
-	GetAll(userId, listId int) ([]models.TodoItem, error)
+	GetList(userId, listId int) ([]models.TodoItem, error)
 	GetById(userId, itemId int) (models.TodoItem, error)
 	Delete(userId, itemId int) error
 	Update(userId, itemId int, input models.UpdateItemInput) error
 }
 
 type Repository struct {
-	Authorization
-	TodoList
-	TodoItem
+	Authorization IAuthorization
+	TodoList      ITodoList
+	TodoItem      ITodoItem
 }
 
 func NewPostgresRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: postgres.NewAuthPostgres(db),
+		Authorization: postgres.auth.NewAuth(db),
 		TodoList:      postgres.NewTodoListPostgres(db),
 		TodoItem:      postgres.NewTodoItemPostgres(db),
 	}

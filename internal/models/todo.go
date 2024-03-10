@@ -8,12 +8,6 @@ type TodoList struct {
 	Description string `json:"description" db:"description"`
 }
 
-type UsersList struct {
-	Id     int
-	UserId int
-	ListId int
-}
-
 type TodoItem struct {
 	Id          int    `json:"id" db:"id"`
 	Title       string `json:"title" db:"title" binding:"required"`

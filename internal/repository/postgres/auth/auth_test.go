@@ -1,4 +1,4 @@
-package postgres
+package auth
 
 import (
 	"github.com/stretchr/testify/assert"
@@ -14,7 +14,7 @@ func TestAuthPostgres_CreateUser(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := NewAuthPostgres(db)
+	r := NewAuth(db)
 
 	tests := []struct {
 		name    string
@@ -76,7 +76,7 @@ func TestAuthPostgres_GetUser(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := NewAuthPostgres(db)
+	r := NewAuth(db)
 
 	type args struct {
 		username string

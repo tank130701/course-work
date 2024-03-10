@@ -120,7 +120,7 @@ func (mr *MockTodoListMockRecorder) Create(userId, list interface{}) *gomock.Cal
 // GetAll mocks base method
 func (m *MockTodoList) GetAll(userId int) ([]todo.TodoList, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", userId)
+	ret := m.ctrl.Call(m, "GetList", userId)
 	ret0, _ := ret[0].([]todo.TodoList)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -129,7 +129,7 @@ func (m *MockTodoList) GetAll(userId int) ([]todo.TodoList, error) {
 // GetAll indicates an expected call of GetAll
 func (mr *MockTodoListMockRecorder) GetAll(userId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockTodoList)(nil).GetAll), userId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockTodoList)(nil).GetAll), userId)
 }
 
 // GetById mocks base method
@@ -216,7 +216,7 @@ func (mr *MockTodoItemMockRecorder) Create(userId, listId, item interface{}) *go
 // GetAll mocks base method
 func (m *MockTodoItem) GetAll(userId, listId int) ([]todo.TodoItem, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll", userId, listId)
+	ret := m.ctrl.Call(m, "GetList", userId, listId)
 	ret0, _ := ret[0].([]todo.TodoItem)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -225,7 +225,7 @@ func (m *MockTodoItem) GetAll(userId, listId int) ([]todo.TodoItem, error) {
 // GetAll indicates an expected call of GetAll
 func (mr *MockTodoItemMockRecorder) GetAll(userId, listId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockTodoItem)(nil).GetAll), userId, listId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockTodoItem)(nil).GetAll), userId, listId)
 }
 
 // GetById mocks base method

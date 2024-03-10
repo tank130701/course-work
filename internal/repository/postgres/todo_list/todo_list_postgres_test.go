@@ -1,4 +1,4 @@
-package postgres
+package todo_list
 
 import (
 	"database/sql"

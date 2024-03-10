@@ -1,4 +1,4 @@
-package postgres
+package todo_item
 
 import (
 	"database/sql"
@@ -174,7 +174,7 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock()
 
-			got, err := r.GetAll(tt.input.userId, tt.input.listId)
+			got, err := r.GetList(tt.input.userId, tt.input.listId)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
