@@ -7,7 +7,7 @@
     "username": "postgres",
     "password": "root",
     "dbname": "todo-app",
-    "ssl_mode": "disabled"
+    "ssl_mode": "disable"
   },
   "mysql": {
     "host": "your_mysql_host_here",
