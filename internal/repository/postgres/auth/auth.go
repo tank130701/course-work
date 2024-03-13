@@ -15,7 +15,7 @@ func NewAuth(db *sqlx.DB) *Auth {
 
 func (r *Auth) CreateUser(user models.User) (int, error) {
 	var id int
-	row := r.db.QueryRow(createUserQuery, user.Name, user.Password)
+	row := r.db.QueryRow(createUserQuery, user.Username, user.Password)
 
 	if err := row.Scan(&id); err != nil {
 		return 0, err
