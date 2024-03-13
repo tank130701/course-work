@@ -71,7 +71,7 @@ func (h *Handler) signIn(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
+		"accessToken":  accessToken,
+		"refreshToken": refreshToken,
 	})
 }

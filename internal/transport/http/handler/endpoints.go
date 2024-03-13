@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	_ "github.com/tank130701/course-work/todo-app/back-end/docs"
@@ -18,6 +20,13 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+
+	config := cors.DefaultConfig()
+	config.AllowCredentials = true
+	config.AllowAllOrigins = true // разрешить все источники, измените это в соответствии с вашими требованиями безопасности
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+
+	router.Use(cors.New(config))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
