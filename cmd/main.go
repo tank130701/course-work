@@ -32,12 +32,12 @@ func main() {
 
 	cfg, err := config.InitConfig()
 	if err != nil {
-		logrus.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("errs initializing configs: %s", err.Error())
 	}
 
 	connData, err := getConnectionData(cfg, cfg.ConnectionType)
 	if err != nil {
-		logrus.Fatalf("error: %s", err)
+		logrus.Fatalf("errs: %s", err)
 		return
 	}
 
@@ -60,7 +60,7 @@ func main() {
 	srv := new(app.App)
 	go func() {
 		if err := srv.Run(cfg.HttpPort, handlers.InitRoutes()); err != nil {
-			logrus.Fatalf("error occured while running http server: %s", err.Error())
+			logrus.Fatalf("errs occured while running http server: %s", err.Error())
 		}
 	}()
 
@@ -73,11 +73,11 @@ func main() {
 	logrus.Print("TodoApp Shutting Down")
 
 	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Errorf("error occured on server shutting down: %s", err.Error())
+		logrus.Errorf("errs occured on server shutting down: %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
-		logrus.Errorf("error occured on db connection close: %s", err.Error())
+		logrus.Errorf("errs occured on db connection close: %s", err.Error())
 	}
 }
 

@@ -1,13 +1,13 @@
 {
-  "http_port": "8080",
+  "http_port": "5000",
   "connection_type" : "postgres",
   "postgresql": {
-    "host": "your_postgresql_host_here",
-    "port": "your_postgresql_port_here",
-    "username": "your_postgresql_username_here",
-    "password": "your_postgresql_password_here",
-    "dbname": "your_postgresql_dbname_here",
-    "ssl_mode": "your_postgresql_sslmode_here"
+    "host": "localhost",
+    "port": "5432",
+    "username": "postgres",
+    "password": "root",
+    "dbname": "todo-app",
+    "ssl_mode": "disabled"
   },
   "mysql": {
     "host": "your_mysql_host_here",

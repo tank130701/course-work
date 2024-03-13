@@ -3,7 +3,9 @@ package repository
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tank130701/course-work/todo-app/back-end/internal/models"
-	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/auth"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/todo_item"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/todo_list"
 )
 
 type IAuthorization interface {
@@ -35,8 +37,8 @@ type Repository struct {
 
 func NewPostgresRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: postgres.auth.NewAuth(db),
-		TodoList:      postgres.NewTodoListPostgres(db),
-		TodoItem:      postgres.NewTodoItemPostgres(db),
+		Authorization: auth.NewAuth(db),
+		TodoList:      todo_list.NewTodoListPostgres(db),
+		TodoItem:      todo_item.NewTodoItemPostgres(db),
 	}
 }

@@ -34,13 +34,31 @@ func (s *AuthService) CreateUser(user models.User) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(username, password string) (string, error) {
+// func (s *AuthService) GenerateToken(username, password string) (string, errs) {
+// 	user, errs := s.repo.GetUser(username, generatePasswordHash(password))
+// 	if errs != nil {
+// 		return "", errs
+// 	}
+
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+// 		jwt.RegisteredClaims{
+// 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
+// 			IssuedAt:  jwt.NewNumericDate(time.Now()),
+// 		},
+// 		user.Id,
+// 	})
+
+// 	return token.SignedString([]byte(signingKey))
+// }
+
+func (s *AuthService) GenerateToken(username, password string) (string, string, error) {
 	user, err := s.repo.GetUser(username, generatePasswordHash(password))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+	// Создание access токена
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -48,7 +66,26 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		user.Id,
 	})
 
-	return token.SignedString([]byte(signingKey))
+	accessString, err := accessToken.SignedString([]byte(signingKey))
+	if err != nil {
+		return "", "", err
+	}
+
+	// Создание refresh токена
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 7 * time.Hour)), // Refresh токен действителен в течение недели
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+		user.Id,
+	})
+
+	refreshString, err := refreshToken.SignedString([]byte(signingKey))
+	if err != nil {
+		return "", "", err
+	}
+
+	return accessString, refreshString, nil
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
@@ -69,6 +106,41 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	}
 
 	return claims.UserId, nil
+}
+
+func (s *AuthService) RefreshToken(refreshToken string) (string, error) {
+	// Разбор refresh токена
+	token, err := jwt.ParseWithClaims(refreshToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid signing method")
+		}
+
+		return []byte(signingKey), nil
+	})
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(*tokenClaims)
+	if !ok {
+		return "", errors.New("token claims are not of type *tokenClaims")
+	}
+
+	// Создание нового access токена
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+		claims.UserId,
+	})
+
+	accessString, err := accessToken.SignedString([]byte(signingKey))
+	if err != nil {
+		return "", err
+	}
+
+	return accessString, nil
 }
 
 func generatePasswordHash(password string) string {

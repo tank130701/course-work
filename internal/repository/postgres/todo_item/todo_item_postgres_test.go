@@ -11,7 +11,7 @@ import (
 func TestTodoItemPostgres_Create(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
@@ -65,7 +65,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 			mock: func(args args, id int) {
 				mock.ExpectBegin()
 
-				rows := sqlmock.NewRows([]string{"id"}).AddRow(id).RowError(0, errors.New("insert error"))
+				rows := sqlmock.NewRows([]string{"id"}).AddRow(id).RowError(0, errors.New("insert errs"))
 				mock.ExpectQuery("INSERT INTO todo_items").
 					WithArgs(args.item.Title, args.item.Description).WillReturnRows(rows)
 
@@ -90,7 +90,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 					WithArgs(args.item.Title, args.item.Description).WillReturnRows(rows)
 
 				mock.ExpectExec("INSERT INTO lists_items").WithArgs(args.listId, id).
-					WillReturnError(errors.New("insert error"))
+					WillReturnError(errors.New("insert errs"))
 
 				mock.ExpectRollback()
 			},
@@ -117,7 +117,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 func TestTodoItemPostgres_GetAll(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
@@ -189,7 +189,7 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 func TestTodoItemPostgres_GetById(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
@@ -256,7 +256,7 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 func TestTodoItemPostgres_Delete(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
@@ -315,7 +315,7 @@ func TestTodoItemPostgres_Delete(t *testing.T) {
 func TestTodoItemPostgres_Update(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
