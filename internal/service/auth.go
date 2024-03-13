@@ -34,10 +34,10 @@ func (s *AuthService) CreateUser(user models.User) (int, error) {
 	return s.repo.CreateUser(user)
 }
 
-// func (s *AuthService) GenerateToken(username, password string) (string, errs) {
-// 	user, errs := s.repo.GetUser(username, generatePasswordHash(password))
-// 	if errs != nil {
-// 		return "", errs
+// func (s *AuthService) GenerateToken(username, password string) (string, error) {
+// 	user, error := s.repo.GetUser(username, generatePasswordHash(password))
+// 	if error != nil {
+// 		return "", error
 // 	}
 
 // 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{

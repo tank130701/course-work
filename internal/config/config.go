@@ -26,7 +26,7 @@ func InitConfig() (*Config, error) {
 	// Read the JSON file (replace "config.json" with your actual file path).
 	data, err := os.ReadFile("configs/config.json")
 	if err != nil {
-		return nil, fmt.Errorf("errs reading config file %w", err)
+		return nil, fmt.Errorf("error reading config file %w", err)
 	}
 
 	// Parse the JSON data into a Config struct.
@@ -34,7 +34,7 @@ func InitConfig() (*Config, error) {
 	err = json.Unmarshal(data, &config)
 	if err != nil {
 
-		return nil, fmt.Errorf("errs parsing config: %w", err)
+		return nil, fmt.Errorf("error parsing config: %w", err)
 	}
 	return &config, nil
 }

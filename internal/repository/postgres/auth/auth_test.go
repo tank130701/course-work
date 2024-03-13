@@ -10,7 +10,7 @@ import (
 func TestAuthPostgres_CreateUser(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
@@ -72,7 +72,7 @@ func TestAuthPostgres_CreateUser(t *testing.T) {
 func TestAuthPostgres_GetUser(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
-		t.Fatalf("an errs '%s' was not expected when opening a stub database connection", err)
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
 
