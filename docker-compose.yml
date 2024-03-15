@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      - DB_PASSWORD=qwerty
+      - DB_PASSWORD=mypassword
 
   db:
     restart: always
