@@ -119,6 +119,20 @@ func (h *Handler) getCategoryById(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
+// @Summary Update Category
+// @Security ApiKeyAuth
+// @Tags categories
+// @Description update category by id
+// @ID update-category
+// @Accept  json
+// @Produce  json
+// @Param id path int true "Category ID"
+// @Param body body models.UpdateTodoCategory true "Update Category Body"
+// @Success 200 {object} errs.StatusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/categories/:id [put]
 func (h *Handler) updateCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -146,6 +160,19 @@ func (h *Handler) updateCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, errs.StatusResponse{Status: "ok"})
 }
 
+// @Summary Delete Category
+// @Security ApiKeyAuth
+// @Tags categories
+// @Description delete category by name
+// @ID delete-category
+// @Accept  json
+// @Produce  json
+// @Param name path string true "Category Name"
+// @Success 200 {object} errs.StatusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/categories/:name [delete]
 func (h *Handler) deleteCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
