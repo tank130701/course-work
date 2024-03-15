@@ -1,4 +1,4 @@
-package todo_list
+package todo_categories
 
 import (
 	"database/sql"
@@ -19,7 +19,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 
 	type args struct {
 		userId int
-		item   models.TodoList
+		item   models.TodoCategory
 	}
 	tests := []struct {
 		name    string
@@ -34,7 +34,7 @@ func TestTodoListPostgres_Create(t *testing.T) {
 				mock.ExpectBegin()
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(1)
-				mock.ExpectQuery("INSERT INTO todo_lists").
+				mock.ExpectQuery("INSERT INTO tasks").
 					WithArgs("title", "description").WillReturnRows(rows)
 
 				mock.ExpectExec("INSERT INTO users_lists").WithArgs(1, 1).
@@ -44,9 +44,9 @@ func TestTodoListPostgres_Create(t *testing.T) {
 			},
 			input: args{
 				userId: 1,
-				item: models.TodoList{
-					Title:       "title",
-					Description: "description",
+				item: models.TodoCategory{
+					Name:   "title",
+					UserId: 1,
 				},
 			},
 			want: 1,
@@ -64,9 +64,9 @@ func TestTodoListPostgres_Create(t *testing.T) {
 			},
 			input: args{
 				userId: 1,
-				item: models.TodoList{
-					Title:       "",
-					Description: "description",
+				item: models.TodoCategory{
+					Name:   "title1",
+					UserId: 1,
 				},
 			},
 			wantErr: true,
@@ -105,7 +105,7 @@ func TestTodoListPostgres_GetAll(t *testing.T) {
 		name    string
 		mock    func()
 		input   args
-		want    []models.TodoList
+		want    []models.TodoCategory
 		wantErr bool
 	}{
 		{
@@ -122,7 +122,7 @@ func TestTodoListPostgres_GetAll(t *testing.T) {
 			input: args{
 				userId: 1,
 			},
-			want: []models.TodoList{
+			want: []models.TodoCategory{
 				{1, "title1", "description1"},
 				{2, "title2", "description2"},
 				{3, "title3", "description3"},
@@ -142,7 +142,7 @@ func TestTodoListPostgres_GetAll(t *testing.T) {
 			input: args{
 				userId: 1,
 			},
-			want: []models.TodoList{
+			want: []models.TodoCategory{
 				{1, "title1", "description1"},
 				{2, "title2", "description2"},
 				{3, "title3", "description3"},
@@ -183,7 +183,7 @@ func TestTodoListPostgres_GetById(t *testing.T) {
 		name    string
 		mock    func()
 		input   args
-		want    models.TodoList
+		want    models.TodoCategory
 		wantErr bool
 	}{
 		{
@@ -199,7 +199,7 @@ func TestTodoListPostgres_GetById(t *testing.T) {
 				listId: 1,
 				userId: 1,
 			},
-			want: models.TodoList{1, "title1", "description1"},
+			want: models.TodoCategory{1, "title1", "description1"},
 		},
 		{
 			name: "Not Found",

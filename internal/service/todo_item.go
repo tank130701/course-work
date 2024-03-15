@@ -7,21 +7,21 @@ import (
 
 type TodoItemService struct {
 	repo     repository.ITodoItem
-	listRepo repository.ITodoList
+	listRepo repository.ITodoCategories
 }
 
-func NewTodoItemService(repo repository.ITodoItem, listRepo repository.ITodoList) *TodoItemService {
+func NewTodoItemService(repo repository.ITodoItem, listRepo repository.ITodoCategories) *TodoItemService {
 	return &TodoItemService{repo: repo, listRepo: listRepo}
 }
 
-func (s *TodoItemService) Create(userId, listId int, item models.TodoItem) (int, error) {
-	_, err := s.listRepo.GetById(userId, listId)
-	if err != nil {
-		// list does not exists or does not belongs to user
-		return 0, err
-	}
+func (s *TodoItemService) Create(userId, categoryId int, item models.TodoItem) (int, error) {
+	//_, err := s.listRepo.GetById(userId, categoryId)
+	//if err != nil {
+	//	// list does not exists or does not belongs to user
+	//	return 0, err
+	//}
 
-	return s.repo.Create(listId, item)
+	return s.repo.Create(userId, categoryId, item)
 }
 
 func (s *TodoItemService) GetAll(userId, listId int) ([]models.TodoItem, error) {

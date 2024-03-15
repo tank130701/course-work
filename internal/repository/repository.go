@@ -4,8 +4,8 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tank130701/course-work/todo-app/back-end/internal/models"
 	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/auth"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/todo_categories"
 	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/todo_item"
-	"github.com/tank130701/course-work/todo-app/back-end/internal/repository/postgres/todo_list"
 )
 
 type IAuthorization interface {
@@ -13,16 +13,16 @@ type IAuthorization interface {
 	GetUser(username, password string) (models.User, error)
 }
 
-type ITodoList interface {
-	Create(userId int, list models.TodoList) (int, error)
-	GetAll(userId int) ([]models.TodoList, error)
-	GetById(userId, listId int) (models.TodoList, error)
-	Delete(userId, listId int) error
-	Update(userId, listId int, input models.UpdateListInput) error
+type ITodoCategories interface {
+	Create(userId int, categoryName string) (int, error)
+	GetAll(userId int) ([]models.TodoCategory, error)
+	GetById(categoryId int) (models.TodoCategory, error)
+	Delete(userId int, categoryName string) error
+	Update(userId, listId int, input models.UpdateTodoCategory) error
 }
 
 type ITodoItem interface {
-	Create(listId int, item models.TodoItem) (int, error)
+	Create(userId, categoryId int, item models.TodoItem) (int, error)
 	GetList(userId, listId int) ([]models.TodoItem, error)
 	GetById(userId, itemId int) (models.TodoItem, error)
 	Delete(userId, itemId int) error
@@ -30,15 +30,15 @@ type ITodoItem interface {
 }
 
 type Repository struct {
-	Authorization IAuthorization
-	TodoList      ITodoList
-	TodoItem      ITodoItem
+	Authorization  IAuthorization
+	TodoCategories ITodoCategories
+	TodoItem       ITodoItem
 }
 
 func NewPostgresRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Authorization: auth.NewAuth(db),
-		TodoList:      todo_list.NewTodoListPostgres(db),
-		TodoItem:      todo_item.NewTodoItemPostgres(db),
+		Authorization:  auth.NewAuth(db),
+		TodoCategories: todo_categories.NewTodoListPostgres(db),
+		TodoItem:       todo_item.NewTodoItemPostgres(db),
 	}
 }

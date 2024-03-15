@@ -18,7 +18,7 @@ import (
 
 // @title Todo App API
 // @version 1.0
-// @description API App for TodoList Application
+// @description API App for TodoCategories Application
 
 // @host localhost:8000
 // @BasePath /
@@ -28,8 +28,8 @@ import (
 // @name Authorization
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter))
-
+	//logrus.SetFormatter(new(logrus.JSONFormatter))
+	logrus.SetLevel(logrus.DebugLevel)
 	cfg, err := config.InitConfig()
 	if err != nil {
 		logrus.Fatalf("error initializing configs: %s", err.Error())

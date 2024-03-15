@@ -21,9 +21,11 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
+	router.Use(gin.Logger()) // Добавление Logger middleware
+
 	config := cors.DefaultConfig()
 	config.AllowCredentials = true
-	config.AllowAllOrigins = true // разрешить все источники, измените это в соответствии с вашими требованиями безопасности
+	config.AllowOrigins = []string{"http://localhost:3000"} // явно указываем источники
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 
 	router.Use(cors.New(config))
@@ -35,28 +37,31 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 		auth.GET("/refresh", h.refreshToken)
+		auth.POST("/logout", h.logout)
 	}
 
 	api := router.Group("/api", h.userIdentity)
 	{
-		lists := api.Group("/lists")
+		categories := api.Group("/categories")
 		{
-			lists.POST("/", h.createList)
-			lists.GET("/", h.getAllLists)
-			lists.GET("/:id", h.getListById)
-			lists.PUT("/:id", h.updateList)
-			lists.DELETE("/:id", h.deleteList)
+			categories.POST("/", h.createCategory)
+			categories.GET("/", h.getAllLists)
+			categories.GET("/:id", h.getCategoryById)
+			categories.PUT("/:id", h.updateCategory)
+			categories.DELETE("/:name", h.deleteCategory)
 
-			items := lists.Group(":id/items")
-			{
-				items.POST("/", h.createItem)
-				items.GET("/", h.getAllItems)
-			}
+			//items := categories.Group(":id/items")
+			//{
+			//	items.POST("/", h.createItem)
+			//	items.GET("/", h.getAllItems)
+			//}
 		}
 
 		items := api.Group("items")
 		{
-			items.GET("/:id", h.getItemById)
+			items.POST("/:id", h.createItem)
+			items.GET("/:id", h.getAllItems)
+			//items.GET("/:id", h.getItemById)
 			items.PUT("/:id", h.updateItem)
 			items.DELETE("/:id", h.deleteItem)
 		}

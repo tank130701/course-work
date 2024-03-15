@@ -41,25 +41,20 @@ func (h *Handler) userIdentity(c *gin.Context) {
 }
 
 func (h *Handler) refreshToken(c *gin.Context) {
-	header := c.GetHeader(authorizationHeader)
-	if header == "" {
-		errs.NewErrorResponse(c, http.StatusUnauthorized, "empty auth header")
+	// Получение refresh token из cookie
+	refreshToken, err := c.Cookie("refreshToken")
+	if err != nil {
+		errs.NewErrorResponse(c, http.StatusUnauthorized, "refresh token cookie is missing")
 		return
 	}
 
-	headerParts := strings.Split(header, " ")
-	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		errs.NewErrorResponse(c, http.StatusUnauthorized, "invalid auth header")
-		return
-	}
-
-	if len(headerParts[1]) == 0 {
-		errs.NewErrorResponse(c, http.StatusUnauthorized, "token is empty")
+	if refreshToken == "" {
+		errs.NewErrorResponse(c, http.StatusUnauthorized, "refresh token is empty")
 		return
 	}
 
 	// Используйте новый метод RefreshToken для обновления access токена
-	newAccessToken, err := h.services.Authorization.RefreshToken(headerParts[1])
+	newAccessToken, err := h.services.Authorization.RefreshToken(refreshToken)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
@@ -67,7 +62,7 @@ func (h *Handler) refreshToken(c *gin.Context) {
 
 	// Отправьте новый access токен обратно клиенту
 	c.JSON(http.StatusOK, map[string]string{
-		"access_token": newAccessToken,
+		"accessToken": newAccessToken,
 	})
 }
 

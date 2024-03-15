@@ -1,32 +1,30 @@
 -- Migration to create the "users" table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users(
    id SERIAL PRIMARY KEY,
-   username VARCHAR(255) NOT NULL,
+   username VARCHAR(255) NOT NULL UNIQUE,
    password_hash VARCHAR(255) NOT NULL
 );
 
+-- Migration to create the "categories" table
+CREATE TABLE IF NOT EXISTS categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_name_user_id ON categories (name, user_id);
+
 -- Migration to create the "tasks" table
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
    id SERIAL PRIMARY KEY,
    title VARCHAR(255) NOT NULL,
    description TEXT,
    status VARCHAR(255) NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'completed')),
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-   user_id INT,
+   user_id INT NOT NULL,
+   category_id INT NOT NULL,
+   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Migration to create the "categories" table
-CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
--- Migration to create the "task_category" junction table
-CREATE TABLE task_category (
-   task_id INT,
-   category_id INT,
-   PRIMARY KEY (task_id, category_id),
-   FOREIGN KEY (task_id) REFERENCES tasks(id),
-   FOREIGN KEY (category_id) REFERENCES categories(id)
-);

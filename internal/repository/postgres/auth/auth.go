@@ -1,7 +1,10 @@
 package auth
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/errs"
 	"github.com/tank130701/course-work/todo-app/back-end/internal/models"
 )
 
@@ -27,6 +30,9 @@ func (r *Auth) CreateUser(user models.User) (int, error) {
 func (r *Auth) GetUser(username, password string) (models.User, error) {
 	var user models.User
 	err := r.db.Get(&user, getUserQuery, username, password)
+	if errors.Is(err, sql.ErrNoRows) {
+		return models.User{}, errs.NewErrorNotFound(username)
+	}
 
-	return user, err
+	return user, nil
 }

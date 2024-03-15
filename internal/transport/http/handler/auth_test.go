@@ -30,7 +30,6 @@ func TestHandler_signUp(t *testing.T) {
 			inputBody: `{"username": "username", "name": "Test Name", "password": "qwerty"}`,
 			inputUser: models.User{
 				Username: "username",
-				Name:     "Test Name",
 				Password: "qwerty",
 			},
 			mockBehavior: func(r *service_mocks.MockAuthorization, user models.User) {
@@ -52,7 +51,6 @@ func TestHandler_signUp(t *testing.T) {
 			inputBody: `{"username": "username", "name": "Test Name", "password": "qwerty"}`,
 			inputUser: models.User{
 				Username: "username",
-				Name:     "Test Name",
 				Password: "qwerty",
 			},
 			mockBehavior: func(r *service_mocks.MockAuthorization, user models.User) {

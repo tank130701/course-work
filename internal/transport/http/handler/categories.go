@@ -16,26 +16,26 @@ import (
 // @ID create-list
 // @Accept  json
 // @Produce  json
-// @Param input body todo.TodoList true "list info"
+// @Param input body todo.TodoCategory true "list info"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/lists [post]
-func (h *Handler) createList(c *gin.Context) {
+func (h *Handler) createCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	var input models.TodoList
+	var input categoryInput
 	if err := c.BindJSON(&input); err != nil {
 		errs.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.services.TodoList.Create(userId, input)
+	id, err := h.services.TodoCategory.Create(userId, input.Name)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -46,8 +46,13 @@ func (h *Handler) createList(c *gin.Context) {
 	})
 }
 
+type categoryInput struct {
+	Name string `json:"name" binding:"required"`
+	//UserId int    `json:"user_id" binding:"required"`
+}
+
 type getAllListsResponse struct {
-	Data []models.TodoList `json:"data"`
+	Data []models.TodoCategory `json:"data"`
 }
 
 // @Summary Get All Lists
@@ -69,7 +74,7 @@ func (h *Handler) getAllLists(c *gin.Context) {
 		return
 	}
 
-	lists, err := h.services.TodoList.GetAll(userId)
+	lists, err := h.services.TodoCategory.GetAll(userId)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -92,12 +97,12 @@ func (h *Handler) getAllLists(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /api/lists/:id [get]
-func (h *Handler) getListById(c *gin.Context) {
-	userId, err := getUserId(c)
-	if err != nil {
-		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+func (h *Handler) getCategoryById(c *gin.Context) {
+	//userId, err := getUserId(c)
+	//if err != nil {
+	//	errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+	//	return
+	//}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -105,7 +110,7 @@ func (h *Handler) getListById(c *gin.Context) {
 		return
 	}
 
-	list, err := h.services.TodoList.GetById(userId, id)
+	list, err := h.services.TodoCategory.GetById(id)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -114,7 +119,7 @@ func (h *Handler) getListById(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (h *Handler) updateList(c *gin.Context) {
+func (h *Handler) updateCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -127,13 +132,13 @@ func (h *Handler) updateList(c *gin.Context) {
 		return
 	}
 
-	var input models.UpdateListInput
+	var input models.UpdateTodoCategory
 	if err := c.BindJSON(&input); err != nil {
 		errs.NewErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := h.services.TodoList.Update(userId, id, input); err != nil {
+	if err := h.services.TodoCategory.Update(userId, id, input); err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -141,20 +146,20 @@ func (h *Handler) updateList(c *gin.Context) {
 	c.JSON(http.StatusOK, errs.StatusResponse{Status: "ok"})
 }
 
-func (h *Handler) deleteList(c *gin.Context) {
+func (h *Handler) deleteCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
+	name := c.Param("name")
 	if err != nil {
-		errs.NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		errs.NewErrorResponse(c, http.StatusBadRequest, "invalid name param")
 		return
 	}
 
-	err = h.services.TodoList.Delete(userId, id)
+	err = h.services.TodoCategory.Delete(userId, name)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -164,3 +169,29 @@ func (h *Handler) deleteList(c *gin.Context) {
 		Status: "ok",
 	})
 }
+
+//func (h *Handler) deleteCategory(c *gin.Context) {
+//	userId, err := getUserId(c)
+//	if err != nil {
+//		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	var requestBody struct {
+//		Name string `json:"name"`
+//	}
+//	if err := c.BindJSON(&requestBody); err != nil {
+//		errs.NewErrorResponse(c, http.StatusBadRequest, "invalid request body")
+//		return
+//	}
+//
+//	err = h.services.TodoCategory.Delete(userId, requestBody.Name)
+//	if err != nil {
+//		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+//		return
+//	}
+//
+//	c.JSON(http.StatusOK, errs.StatusResponse{
+//		Status: "ok",
+//	})
+//}

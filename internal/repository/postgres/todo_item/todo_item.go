@@ -16,34 +16,28 @@ func NewTodoItemPostgres(db *sqlx.DB) *TodoItemPostgres {
 	return &TodoItemPostgres{db: db, qb: &qb}
 }
 
-func (r *TodoItemPostgres) Create(listId int, item models.TodoItem) (int, error) {
+func (r *TodoItemPostgres) Create(userId, categoryId int, item models.TodoItem) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, err
 	}
 
-	var itemId int
+	var taskId int
 
-	row := tx.QueryRow(createItemQuery, item.Title, item.Description)
-	err = row.Scan(&itemId)
+	row := tx.QueryRow(createTaskQuery, item.Title, item.Description, "todo", userId, categoryId)
+	err = row.Scan(&taskId)
 	if err != nil {
 		tx.Rollback()
 		return 0, err
 	}
 
-	_, err = tx.Exec(createListItemsQuery, listId, itemId)
-	if err != nil {
-		tx.Rollback()
-		return 0, err
-	}
-
-	return itemId, tx.Commit()
+	return taskId, tx.Commit()
 }
 
-func (r *TodoItemPostgres) GetList(userId, listId int) ([]models.TodoItem, error) {
+func (r *TodoItemPostgres) GetList(userId, categoryId int) ([]models.TodoItem, error) {
 	var items []models.TodoItem
 
-	if err := r.db.Select(&items, getAllQuery, listId, userId); err != nil {
+	if err := r.db.Select(&items, getAllQuery, userId, categoryId); err != nil {
 		return nil, err
 	}
 
@@ -61,13 +55,14 @@ func (r *TodoItemPostgres) GetById(userId, itemId int) (models.TodoItem, error) 
 }
 
 func (r *TodoItemPostgres) Delete(userId, itemId int) error {
-	_, err := r.db.Exec(deleteQuery, userId, itemId)
+	//_, err := r.db.Exec(deleteQuery, userId, itemId)
+	_, err := r.db.Exec(deleteQuery, itemId)
 	return err
 }
 
 func (r *TodoItemPostgres) Update(userId, itemId int, input models.UpdateItemInput) error {
 	// Start building the query
-	query := r.qb.Update("items")
+	query := r.qb.Update("tasks")
 
 	// Add conditions to the query
 	if input.Title != nil {
@@ -78,13 +73,13 @@ func (r *TodoItemPostgres) Update(userId, itemId int, input models.UpdateItemInp
 		query = query.Set("description", *input.Description)
 	}
 
-	if input.Done != nil {
-		query = query.Set("done", *input.Done)
+	if input.Status != nil {
+		query = query.Set("done", *input.Status)
 	}
 
 	// Finalize the query
 	queryRes, args, err := query.
-		Where(squirrel.Expr("id IN (SELECT item_id FROM "+"items"+" WHERE list_id IN (SELECT list_id FROM users WHERE user_id = ?))", userId)).
+		//Where(squirrel.Expr("id IN (SELECT item_id FROM "+"items"+" WHERE list_id IN (SELECT list_id FROM users WHERE user_id = ?))", userId)).
 		Where("id = ?", itemId).
 		ToSql()
 

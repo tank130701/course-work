@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/stretchr/testify/assert"
+	"github.com/tank130701/course-work/todo-app/back-end/internal/models"
 	sqlmock "github.com/zhashkevych/go-sqlxmock"
 	"testing"
 )
 
-func TestTodoItemPostgres_Create(t *testing.T) {
+func TestTaskPostgres_Create(t *testing.T) {
 	db, mock, err := sqlmock.Newx()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -18,8 +19,9 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 	r := NewTodoItemPostgres(db)
 
 	type args struct {
-		listId int
-		item   todo.TodoItem
+		userId     int
+		categoryId int
+		task       models.TodoItem
 	}
 	type mockBehavior func(args args, id int)
 
@@ -33,63 +35,66 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 		{
 			name: "Ok",
 			input: args{
-				listId: 1,
-				item: todo.TodoItem{
+				userId:     1,
+				categoryId: 1,
+				task: models.TodoItem{
 					Title:       "test title",
 					Description: "test description",
+					Status:      "todo",
 				},
 			},
-			want: 2,
+			want: 1,
 			mock: func(args args, id int) {
 				mock.ExpectBegin()
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
-				mock.ExpectQuery("INSERT INTO todo_items").
-					WithArgs(args.item.Title, args.item.Description).WillReturnRows(rows)
-
-				mock.ExpectExec("INSERT INTO lists_items").WithArgs(args.listId, id).
-					WillReturnResult(sqlmock.NewResult(1, 1))
+				mock.ExpectQuery("INSERT INTO tasks").
+					WithArgs(args.task.Title, args.task.Description, args.task.Status, args.userId, args.categoryId).WillReturnRows(rows) // добавлены поля categoryId и CreatedAt
 
 				mock.ExpectCommit()
 			},
 		},
 		{
-			name: "Empty Fields",
+			name: "Failed Insert",
 			input: args{
-				listId: 1,
-				item: todo.TodoItem{
-					Title:       "",
+				userId:     1,
+				categoryId: 1,
+				task: models.TodoItem{
+					Title:       "title",
 					Description: "description",
+					Status:      "todo",
 				},
 			},
 			mock: func(args args, id int) {
 				mock.ExpectBegin()
 
-				rows := sqlmock.NewRows([]string{"id"}).AddRow(id).RowError(0, errors.New("insert error"))
-				mock.ExpectQuery("INSERT INTO todo_items").
-					WithArgs(args.item.Title, args.item.Description).WillReturnRows(rows)
+				mock.ExpectQuery("INSERT INTO tasks").
+					WithArgs(args.task.Title, args.task.Description, args.task.Status, args.userId).
+					WillReturnError(errors.New("insert error"))
 
 				mock.ExpectRollback()
 			},
 			wantErr: true,
 		},
 		{
-			name: "Failed 2nd Insert",
+			name: "Failed Association Insert",
 			input: args{
-				listId: 1,
-				item: todo.TodoItem{
+				userId:     1,
+				categoryId: 1,
+				task: models.TodoItem{
 					Title:       "title",
 					Description: "description",
+					Status:      "todo",
 				},
 			},
 			mock: func(args args, id int) {
 				mock.ExpectBegin()
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
-				mock.ExpectQuery("INSERT INTO todo_items").
-					WithArgs(args.item.Title, args.item.Description).WillReturnRows(rows)
+				mock.ExpectQuery("INSERT INTO tasks").
+					WithArgs(args.task.Title, args.task.Description, args.task.Status, args.userId).WillReturnRows(rows)
 
-				mock.ExpectExec("INSERT INTO lists_items").WithArgs(args.listId, id).
+				mock.ExpectExec("INSERT INTO task_category").WithArgs(id, args.categoryId).
 					WillReturnError(errors.New("insert error"))
 
 				mock.ExpectRollback()
@@ -102,7 +107,7 @@ func TestTodoItemPostgres_Create(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock(tt.input, tt.want)
 
-			got, err := r.Create(tt.input.listId, tt.input.item)
+			got, err := r.Create(tt.input.userId, tt.input.categoryId, tt.input.task)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -124,49 +129,50 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 	r := NewTodoItemPostgres(db)
 
 	type args struct {
-		listId int
-		userId int
+		categoryId int
+		userId     int
 	}
 	tests := []struct {
 		name    string
 		mock    func()
 		input   args
-		want    []todo.TodoItem
+		want    []models.TodoItem
 		wantErr bool
 	}{
 		{
 			name: "Ok",
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"}).
-					AddRow(1, "title1", "description1", true).
-					AddRow(2, "title2", "description2", false).
-					AddRow(3, "title3", "description3", false)
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "status"}).
+					AddRow(1, "title1", "description1", "completed").
+					AddRow(2, "title2", "description2", "todo").
+					AddRow(3, "title3", "description3", "todo")
 
-				mock.ExpectQuery("SELECT (.+) FROM todo_items ti INNER JOIN lists_items li on (.+) INNER JOIN users_lists ul on (.+) WHERE (.+)").
+				mock.ExpectQuery("SELECT (.+) FROM tasks WHERE (.+)").
 					WithArgs(1, 1).WillReturnRows(rows)
 			},
 			input: args{
-				listId: 1,
-				userId: 1,
+				categoryId: 1,
+				userId:     1,
 			},
-			want: []todo.TodoItem{
-				{1, "title1", "description1", true},
-				{2, "title2", "description2", false},
-				{3, "title3", "description3", false},
+			want: []models.TodoItem{
+				{Id: 1, Title: "title1", Description: "description1", Status: "completed"},
+				{Id: 2, Title: "title2", Description: "description2", Status: "todo"},
+				{Id: 3, Title: "title3", Description: "description3", Status: "todo"},
 			},
 		},
 		{
 			name: "No Records",
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"})
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "status"})
 
-				mock.ExpectQuery("SELECT (.+) FROM todo_items ti INNER JOIN lists_items li on (.+) INNER JOIN users_lists ul on (.+) WHERE (.+)").
+				mock.ExpectQuery("SELECT (.+) FROM tasks WHERE (.+)").
 					WithArgs(1, 1).WillReturnRows(rows)
 			},
 			input: args{
-				listId: 1,
-				userId: 1,
+				categoryId: 1,
+				userId:     1,
 			},
+			want: []models.TodoItem(nil),
 		},
 	}
 
@@ -174,7 +180,7 @@ func TestTodoItemPostgres_GetAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock()
 
-			got, err := r.GetList(tt.input.userId, tt.input.listId)
+			got, err := r.GetList(tt.input.userId, tt.input.categoryId)
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
@@ -203,13 +209,13 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 		name    string
 		mock    func()
 		input   args
-		want    todo.TodoItem
+		want    models.TodoItem
 		wantErr bool
 	}{
 		{
 			name: "Ok",
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"}).
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "todo"}).
 					AddRow(1, "title1", "description1", true)
 
 				mock.ExpectQuery("SELECT (.+) FROM todo_items ti INNER JOIN lists_items li on (.+) INNER JOIN users_lists ul on (.+) WHERE (.+)").
@@ -219,7 +225,7 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 				itemId: 1,
 				userId: 1,
 			},
-			want: todo.TodoItem{1, "title1", "description1", true},
+			want: models.TodoItem{1, "title1", "description1", "todo"},
 		},
 		{
 			name: "Not Found",
@@ -324,7 +330,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 	type args struct {
 		itemId int
 		userId int
-		input  todo.UpdateItemInput
+		input  models.UpdateItemInput
 	}
 	tests := []struct {
 		name    string
@@ -341,10 +347,10 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			input: args{
 				itemId: 1,
 				userId: 1,
-				input: todo.UpdateItemInput{
+				input: models.UpdateItemInput{
 					Title:       stringPointer("new title"),
 					Description: stringPointer("new description"),
-					Done:        boolPointer(true),
+					Status:      stringPointer("in Progress"),
 				},
 			},
 		},
@@ -357,7 +363,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			input: args{
 				itemId: 1,
 				userId: 1,
-				input: todo.UpdateItemInput{
+				input: models.UpdateItemInput{
 					Title:       stringPointer("new title"),
 					Description: stringPointer("new description"),
 				},
@@ -372,7 +378,7 @@ func TestTodoItemPostgres_Update(t *testing.T) {
 			input: args{
 				itemId: 1,
 				userId: 1,
-				input: todo.UpdateItemInput{
+				input: models.UpdateItemInput{
 					Title: stringPointer("new title"),
 				},
 			},

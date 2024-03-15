@@ -31,7 +31,6 @@ func TestAuthPostgres_CreateUser(t *testing.T) {
 					WithArgs("Test", "test", "password").WillReturnRows(rows)
 			},
 			input: models.User{
-				Name:     "Test",
 				Username: "test",
 				Password: "password",
 			},
@@ -45,7 +44,6 @@ func TestAuthPostgres_CreateUser(t *testing.T) {
 					WithArgs("Test", "test", "").WillReturnRows(rows)
 			},
 			input: models.User{
-				Name:     "Test",
 				Username: "test",
 				Password: "",
 			},
@@ -101,7 +99,6 @@ func TestAuthPostgres_GetUser(t *testing.T) {
 			input: args{"test", "password"},
 			want: models.User{
 				Id:       1,
-				Name:     "Test",
 				Username: "test",
 				Password: "password",
 			},

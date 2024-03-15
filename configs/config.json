@@ -4,8 +4,8 @@
   "postgresql": {
     "host": "localhost",
     "port": "5432",
-    "username": "postgres",
-    "password": "root",
+    "username": "myuser",
+    "password": "mypassword",
     "dbname": "todo-app",
     "ssl_mode": "disable"
   },

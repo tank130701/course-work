@@ -101,7 +101,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/todo.TodoList"
+                            "$ref": "#/definitions/todo.TodoCategories"
                         }
                     }
                 ],
@@ -273,7 +273,7 @@ var doc = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/todo.TodoList"
+                        "$ref": "#/definitions/todo.TodoCategories"
                     }
                 }
             }
@@ -293,7 +293,7 @@ var doc = `{
                 }
             }
         },
-        "todo.TodoList": {
+        "todo.TodoCategories": {
             "type": "object",
             "required": [
                 "title"
@@ -355,7 +355,7 @@ var SwaggerInfo = swaggerInfo{
 	BasePath:    "/",
 	Schemes:     []string{},
 	Title:       "Todo App API",
-	Description: "API Server for TodoList Application",
+	Description: "API Server for TodoCategories Application",
 }
 
 type s struct{}
