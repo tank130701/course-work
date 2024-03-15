@@ -17,6 +17,6 @@ services:
     volumes:
     - ./.database/postgres/data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=qwerty
+      - POSTGRES_PASSWORD=mypassword
     ports:
       - 5436:5432
