@@ -14,7 +14,10 @@ RUN chmod +x wait-for-postgres.sh
 
 # build go app
 RUN go mod download
-RUN go build -o todo-app ./cmd/main.go
+
+CMD ["cd cmd"]
+RUN go build -o todo-app ./main.go
+CMD ["cd .."]
 
 CMD ["make migrate"]
 CMD ["./todo-app"]
