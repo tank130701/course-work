@@ -20,7 +20,7 @@ import (
 // @version 1.0
 // @description API App for TodoCategories Application
 
-// @host localhost:8000
+// @host localhost:5000
 // @BasePath /
 
 // @securityDefinitions.apikey ApiKeyAuth

@@ -16,11 +16,11 @@ import (
 // @ID create-list
 // @Accept  json
 // @Produce  json
-// @Param input body todo.TodoCategory true "list info"
+// @Param input body models.TodoCategory true "list info"
 // @Success 200 {integer} integer 1
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/lists [post]
 func (h *Handler) createCategory(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -63,9 +63,9 @@ type getAllListsResponse struct {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} getAllListsResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/lists [get]
 func (h *Handler) getAllLists(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -92,10 +92,10 @@ func (h *Handler) getAllLists(c *gin.Context) {
 // @ID get-list-by-id
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} todo.ListItem
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Success 200 {object} models.TodoCategory
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/lists/:id [get]
 func (h *Handler) getCategoryById(c *gin.Context) {
 	//userId, err := getUserId(c)
@@ -129,9 +129,9 @@ func (h *Handler) getCategoryById(c *gin.Context) {
 // @Param id path int true "Category ID"
 // @Param body body models.UpdateTodoCategory true "Update Category Body"
 // @Success 200 {object} errs.StatusResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/categories/:id [put]
 func (h *Handler) updateCategory(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -169,9 +169,9 @@ func (h *Handler) updateCategory(c *gin.Context) {
 // @Produce  json
 // @Param name path string true "Category Name"
 // @Success 200 {object} errs.StatusResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/categories/:name [delete]
 func (h *Handler) deleteCategory(c *gin.Context) {
 	userId, err := getUserId(c)

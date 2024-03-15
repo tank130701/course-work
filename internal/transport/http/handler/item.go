@@ -19,9 +19,9 @@ import (
 // @Param id path int true "List ID"
 // @Param body body models.TodoItem true "Item Body"
 // @Success 200 {object} map[string]interface{}
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/items/:id [post]
 func (h *Handler) createItem(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -62,9 +62,9 @@ func (h *Handler) createItem(c *gin.Context) {
 // @Produce  json
 // @Param id path int true "List ID"
 // @Success 200 {array} models.TodoItem
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/items/:id [get]
 func (h *Handler) getAllItems(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -97,9 +97,9 @@ func (h *Handler) getAllItems(c *gin.Context) {
 // @Produce  json
 // @Param id path int true "Item ID"
 // @Success 200 {object} models.TodoItem
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/items/:id [get]
 func (h *Handler) getItemById(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -133,9 +133,9 @@ func (h *Handler) getItemById(c *gin.Context) {
 // @Param id path int true "Item ID"
 // @Param body body models.UpdateItemInput true "Update Item Body"
 // @Success 200 {object} errs.StatusResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/items/:id [put]
 func (h *Handler) updateItem(c *gin.Context) {
 	userId, err := getUserId(c)
@@ -173,9 +173,9 @@ func (h *Handler) updateItem(c *gin.Context) {
 // @Produce  json
 // @Param id path int true "Item ID"
 // @Success 200 {object} errs.StatusResponse
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /api/items/:id [delete]
 func (h *Handler) deleteItem(c *gin.Context) {
 	userId, err := getUserId(c)

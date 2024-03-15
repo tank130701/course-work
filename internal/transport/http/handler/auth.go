@@ -16,11 +16,11 @@ import (
 // @ID create-account
 // @Accept  json
 // @Produce  json
-// @Param input body todo.User true "account info"
+// @Param input body models.User true "account info"
 // @Success 200 {integer} integer 1
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var input models.User
@@ -54,9 +54,9 @@ type signInInput struct {
 // @Produce  json
 // @Param input body signInInput true "credentials"
 // @Success 200 {string} string "token"
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var input signInInput
@@ -99,9 +99,9 @@ func (h *Handler) signIn(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {string} string "ok"
-// @Failure 400,404 {object} errorResponse
-// @Failure 500 {object} errorResponse
-// @Failure default {object} errorResponse
+// @Failure 400,404 {object} errs.errorResponse
+// @Failure 500 {object} errs.errorResponse
+// @Failure default {object} errs.errorResponse
 // @Router /auth/logout [post]
 func (h *Handler) logout(c *gin.Context) {
 	// Удаление HTTP-only cookie, установив срок его действия в прошлом
