@@ -74,7 +74,7 @@ func (r *TodoItemPostgres) Update(userId, itemId int, input models.UpdateItemInp
 	}
 
 	if input.Status != nil {
-		query = query.Set("done", *input.Status)
+		query = query.Set("status", *input.Status)
 	}
 
 	// Finalize the query
