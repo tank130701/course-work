@@ -21,13 +21,15 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.Use(gin.Logger()) // Добавление Logger middleware
+	router.Use(gin.Logger()) // Adding Logger middleware
 
 	config := cors.DefaultConfig()
+	//config.AllowAllOrigins = true
 	config.AllowCredentials = true
-	config.AllowOrigins = []string{"http://localhost:3000"} // явно указываем источники
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	//config.AllowHeaders = []string{"*"} // Allow all headers
 
+	config.AllowOrigins = []string{"http://localhost:3000"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	router.Use(cors.New(config))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -48,7 +50,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			categories.GET("/", h.getAllLists)
 			categories.GET("/:id", h.getCategoryById)
 			categories.PUT("/:id", h.updateCategory)
-			categories.DELETE("/:name", h.deleteCategory)
+			categories.DELETE("/:id", h.deleteCategory)
 
 			//items := categories.Group(":id/items")
 			//{

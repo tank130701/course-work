@@ -43,9 +43,9 @@ func (r *TodoCategories) GetById(categoryId int) (models.TodoCategory, error) {
 	return category, err
 }
 
-func (r *TodoCategories) Delete(userId int, categoryName string) error {
+func (r *TodoCategories) Delete(userId int, categoryId int) error {
 	// Вызов хранимой процедуры для удаления категории и связанных задач
-	_, err := r.db.Exec(deleteQuery, userId, categoryName)
+	_, err := r.db.Exec(deleteQuery, userId, categoryId)
 	return err
 }
 

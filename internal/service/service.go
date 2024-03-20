@@ -18,7 +18,7 @@ type TodoCategory interface {
 	Create(userId int, categoryName string) (int, error)
 	GetAll(userId int) ([]models.TodoCategory, error)
 	GetById(categoryId int) (models.TodoCategory, error)
-	Delete(userId int, categoryName string) error
+	Delete(userId int, categoryId int) error
 	Update(userId, listId int, input models.UpdateTodoCategory) error
 }
 

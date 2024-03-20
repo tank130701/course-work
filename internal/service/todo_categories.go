@@ -25,8 +25,8 @@ func (s *TodoCategoriesService) GetById(categoryId int) (models.TodoCategory, er
 	return s.repo.GetById(categoryId)
 }
 
-func (s *TodoCategoriesService) Delete(userId int, categoryName string) error {
-	return s.repo.Delete(userId, categoryName)
+func (s *TodoCategoriesService) Delete(userId int, categoryId int) error {
+	return s.repo.Delete(userId, categoryId)
 }
 
 func (s *TodoCategoriesService) Update(userId, listId int, input models.UpdateTodoCategory) error {

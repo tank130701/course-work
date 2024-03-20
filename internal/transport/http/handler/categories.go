@@ -180,13 +180,13 @@ func (h *Handler) deleteCategory(c *gin.Context) {
 		return
 	}
 
-	name := c.Param("name")
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusBadRequest, "invalid name param")
 		return
 	}
 
-	err = h.services.TodoCategory.Delete(userId, name)
+	err = h.services.TodoCategory.Delete(userId, id)
 	if err != nil {
 		errs.NewErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
