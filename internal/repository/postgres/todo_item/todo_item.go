@@ -24,7 +24,7 @@ func (r *TodoItemPostgres) Create(userId, categoryId int, item models.TodoItem) 
 
 	var taskId int
 
-	row := tx.QueryRow(createTaskQuery, item.Title, item.Description, "todo", userId, categoryId)
+	row := tx.QueryRow(createTaskQuery, item.Title, item.Description, item.Status, userId, categoryId)
 	err = row.Scan(&taskId)
 	if err != nil {
 		tx.Rollback()
