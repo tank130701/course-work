@@ -49,7 +49,8 @@ func TestTaskPostgres_Create(t *testing.T) {
 
 				rows := sqlmock.NewRows([]string{"id"}).AddRow(id)
 				mock.ExpectQuery("INSERT INTO tasks").
-					WithArgs(args.task.Title, args.task.Description, args.task.Status, args.userId, args.categoryId).WillReturnRows(rows) // добавлены поля categoryId и CreatedAt
+					WithArgs(args.task.Title,
+						args.task.Description, args.task.Status, args.userId, args.categoryId).WillReturnRows(rows) // добавлены поля categoryId и CreatedAt
 
 				mock.ExpectCommit()
 			},
@@ -215,10 +216,10 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 		{
 			name: "Ok",
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "todo"}).
-					AddRow(1, "title1", "description1", true)
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "status"}).
+					AddRow(1, "title1", "description1", "todo")
 
-				mock.ExpectQuery("SELECT (.+) FROM todo_items ti INNER JOIN lists_items li on (.+) INNER JOIN users_lists ul on (.+) WHERE (.+)").
+				mock.ExpectQuery("SELECT id, title, description, status FROM tasks WHERE id = ? AND user_id = ?").
 					WithArgs(1, 1).WillReturnRows(rows)
 			},
 			input: args{
@@ -230,9 +231,9 @@ func TestTodoItemPostgres_GetById(t *testing.T) {
 		{
 			name: "Not Found",
 			mock: func() {
-				rows := sqlmock.NewRows([]string{"id", "title", "description", "done"})
+				rows := sqlmock.NewRows([]string{"id", "title", "description", "status"})
 
-				mock.ExpectQuery("SELECT (.+) FROM todo_items ti INNER JOIN lists_items li on (.+) INNER JOIN users_lists ul on (.+) WHERE (.+)").
+				mock.ExpectQuery("SELECT id, title, description, status FROM tasks WHERE id = ? AND user_id = ?").
 					WithArgs(404, 1).WillReturnRows(rows)
 			},
 			input: args{

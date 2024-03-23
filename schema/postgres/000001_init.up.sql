@@ -7,13 +7,15 @@ CREATE TABLE IF NOT EXISTS users(
 
 -- Migration to create the "categories" table
 CREATE TABLE IF NOT EXISTS categories (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    user_id INT NOT NULL,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+   id SERIAL PRIMARY KEY,
+   name VARCHAR(255) NOT NULL,
+   user_id INT NOT NULL,
+   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_name_user_id ON categories (name, user_id);
+
+CREATE INDEX IF NOT EXISTS idx_category_name ON categories (name);
 
 -- Migration to create the "tasks" table
 CREATE TABLE IF NOT EXISTS tasks (
