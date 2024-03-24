@@ -9,11 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary Create todo list
+// @Summary Create Category
 // @Security ApiKeyAuth
-// @Tags lists
-// @Description create todo list
-// @ID create-list
+// @Tags categories
+// @Description create Category
+// @ID create-category
 // @Accept  json
 // @Produce  json
 // @Param input body models.TodoCategory true "list info"
@@ -21,7 +21,7 @@ import (
 // @Failure 400,404 {object} errs.errorResponse
 // @Failure 500 {object} errs.errorResponse
 // @Failure default {object} errs.errorResponse
-// @Router /api/lists [post]
+// @Router /api/categories [post]
 func (h *Handler) createCategory(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -57,7 +57,7 @@ type getAllListsResponse struct {
 
 // @Summary Get All Lists
 // @Security ApiKeyAuth
-// @Tags lists
+// @Tags categories
 // @Description get all lists
 // @ID get-all-lists
 // @Accept  json
@@ -66,7 +66,7 @@ type getAllListsResponse struct {
 // @Failure 400,404 {object} errs.errorResponse
 // @Failure 500 {object} errs.errorResponse
 // @Failure default {object} errs.errorResponse
-// @Router /api/lists [get]
+// @Router /api/categories [get]
 func (h *Handler) getAllLists(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -87,7 +87,7 @@ func (h *Handler) getAllLists(c *gin.Context) {
 
 // @Summary Get List By Id
 // @Security ApiKeyAuth
-// @Tags lists
+// @Tags categories
 // @Description get list by id
 // @ID get-list-by-id
 // @Accept  json
